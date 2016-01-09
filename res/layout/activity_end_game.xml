@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EndGameActivity" >
+
+    <LinearLayout
+        android:id="@+id/EndGameActivityLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="7dip"
+        android:background="@drawable/end_game_bkg"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="20dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:paddingTop="20dip" >
+
+        <TextView
+            android:id="@+id/EndGameActivityMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You pressed the quit button!"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#333333" />
+
+        <Button
+            android:id="@+id/playOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dip"
+            android:background="@drawable/playon"
+            android:text="Play On"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#eeeeee" />
+
+        <Button
+            android:id="@+id/EndGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/game_end"
+            android:text="End Game"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#eeeeee" />
+    </LinearLayout>
+
+</RelativeLayout>

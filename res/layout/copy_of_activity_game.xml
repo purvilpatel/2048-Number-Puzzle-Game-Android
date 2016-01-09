@@ -1,0 +1,143 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e8ebef"
+    android:gravity="center"
+    tools:context=".Game" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_title" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/imageView1"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/modeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:text="Normal"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#454545"
+            android:textStyle="bold|italic"
+            android:typeface="serif" />
+
+        <ToggleButton
+            android:id="@+id/normalMode"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/normal_mode_button"
+            android:checked="true"
+            android:textOff=" "
+            android:textOn=" " />
+
+        <ToggleButton
+            android:id="@+id/timerMode"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_alignTop="@+id/normalMode"
+            android:layout_marginRight="7dp"
+            android:layout_toLeftOf="@id/normalMode"
+            android:background="@drawable/timer_mode_button"
+            android:checked="false"
+            android:minWidth="48dip"
+            android:textOff=" "
+            android:textOn=" " />
+
+        <ImageView
+            android:id="@+id/tile"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_alignTop="@+id/normalMode"
+            android:layout_marginRight="7dp"
+            android:layout_toLeftOf="@id/timerMode"
+            android:src="@drawable/tile" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/playBtn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativeLayout1"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:background="#43c6ec"
+        android:text="Play"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/tutorial"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/playBtn"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#3b5999"
+        android:text="Tutorial"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/rateUs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tutorial"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#1abc9c"
+        android:text="Rate Us"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/moreApp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/rateUs"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#9b59b6"
+        android:text="More App"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+</RelativeLayout>

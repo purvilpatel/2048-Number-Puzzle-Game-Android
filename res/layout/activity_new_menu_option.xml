@@ -1,0 +1,167 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    tools:context=".NewMenuOption" >
+
+    <!-- Spinner Element -->
+
+    <LinearLayout
+        android:id="@+id/newMenuOptionLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/new_menu_option_bkg"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip" >
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/gameModeMenuOption"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Game Mode  "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#222222" />
+
+                <Spinner
+                    android:id="@+id/gameModeSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:spinnerMode="dropdown" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/targetTileMenuOtion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Target Tile  "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#222222" />
+
+                <Spinner
+                    android:id="@+id/targetTileSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:spinnerMode="dropdown" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/tileMenuOtion"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Tile  "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#222222" />
+
+                <Spinner
+                    android:id="@+id/tileSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:spinnerMode="dropdown" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:id="@+id/timeRushMenuOtion"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Time Rush  "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#222222" />
+
+                <Spinner
+                    android:id="@+id/timeRushSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:spinnerMode="dropdown" />
+            </TableRow>
+        </TableLayout>
+
+        <Button
+            android:id="@+id/newMenuOptionSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:background="@drawable/bkg_btn_1"
+            android:text="New Game"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#eeeeee" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="15dip" >
+
+            <Button
+                android:id="@+id/newMenuOptionRateUs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:background="#0000"
+                android:drawableTop="@drawable/rate_us"
+                android:paddingBottom="5dip"
+                android:text="Rate Us"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/newMenuOptionLikeUs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:background="#0000"
+                android:drawableTop="@drawable/like_us"
+                android:paddingBottom="5dip"
+                android:text="Like Us"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <Button
+                android:id="@+id/newMenuOptionBestScore"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:background="#0000"
+                android:drawableTop="@drawable/best_score_3"
+                android:paddingBottom="5dip"
+                android:text="Local Score"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

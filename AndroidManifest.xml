@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.inverted.tech.mission2048"
+    android:versionCode="12"
+    android:versionName="3.0.0" >
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.NETWORK" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.inverted.tech.mission2048.Game"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.GameDisplay"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.LoadAndSave"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.Resume_Pause"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.RateUs"
+            android:noHistory="true" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.LikeUsActivity"
+            android:noHistory="true" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.MenuOptions"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.BestScoreDisplay"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.HighScore"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.NewLayout_For_Testing"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.NewHighscoreActivity"
+            android:label="@string/title_activity_new_highscore"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.supportClass.EndGameActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.supportClass.AnimationTestingClass"
+            android:label="@string/title_activity_tryand_error"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.NewMenuOption"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent" >
+        </activity>
+        <activity
+            android:name="com.inverted.tech.mission2048.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <!-- Required Activity for playback of Vungle video ads -->
+        <activity
+            android:name="com.vungle.publisher.FullScreenAdActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+    </application>
+
+</manifest><!-- 
+Version #12 [3.0.0]   Removing add SDKs -->

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/highScoreActivityCpntainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:background="#e8ebef"
+    android:gravity="top" >
+
+    <TextView
+        android:id="@+id/titleHighScore"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#66c9b5"
+        android:gravity="center"
+        android:padding="10dip"
+        android:text="Final Score : Tiles 4"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:textStyle="bold|italic"
+        android:typeface="serif" />
+
+    <!-- android:background="#1abc9c" -->
+
+    <Button
+        android:id="@+id/playAgain"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/scoreContainerLayout"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@drawable/bkg_btn_1"
+        android:text="Play Again"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/highScoreMainMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="50dip"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/playAgain"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:layout_marginTop="12dip"
+        android:background="@drawable/bkg_btn_5"
+        android:text="Main Menu"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/fbShare"
+        android:layout_width="wrap_content"
+        android:layout_height="50dip"
+        android:layout_below="@+id/highScoreMainMenu"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="5dip"
+        android:layout_marginTop="12dip"
+        android:background="@drawable/bkg_btn_6"
+        android:drawableLeft="@drawable/facebook_f"
+        android:gravity="center"
+        android:padding="5dip"
+        android:text="Share"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+    <!-- android:background="#1abc9c" -->
+
+    <LinearLayout
+        android:id="@+id/scoreContainerLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleHighScore"
+        android:layout_marginBottom="20dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
+            android:layout_marginRight="15dip" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Base Score"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/baseScoreTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:typeface="serif" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
+            android:layout_marginRight="15dip"
+            android:layout_marginTop="10dip" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="High Number Bonus"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/numberBonusTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:typeface="serif" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dip"
+            android:layout_marginTop="7dip"
+            android:src="@drawable/separator" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This Round"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/thisRoundTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1234567890"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:typeface="serif" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ImageView01"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="7dip"
+            android:layout_marginTop="7dip"
+            android:src="@drawable/separator" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dip"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="High Score"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/highScoreTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123456"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:typeface="serif" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="15dip"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Points"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/pointsTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123456"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:typeface="serif" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/scanner"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/scanner_strip"
+        android:visibility="invisible" />
+
+</RelativeLayout>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/highScoreActivityCpntainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:background="#e8ebef"
+    android:gravity="top" >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#66c9b5"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Final Score : Tiles 4"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="bold|italic"
+        android:typeface="serif" />
+
+    <TextView
+        android:id="@+id/thisRoundTv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="This Round"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#404040"
+        android:typeface="serif" />
+
+    <TextView
+        android:id="@+id/thisRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/thisRoundTv"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="2048"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#141414"
+        android:textStyle="bold|italic"
+        android:typeface="serif" />
+
+    <TextView
+        android:id="@+id/bestScoreTv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/thisRound"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Best Score"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#404040"
+        android:typeface="serif" />
+
+    <TextView
+        android:id="@+id/bestScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bestScoreTv"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="2048"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#141414"
+        android:textStyle="bold|italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/playAgain"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bestScore"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/menu_button_default"
+        android:text="Play Again"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+
+    <!-- android:background="#1abc9c" -->
+
+    <Button
+        android:id="@+id/highScoreMainMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/playAgain"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/menu_button_default"
+        android:text="Main Menu"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+
+    <!-- android:background="#1abc9c" -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/highScoreMainMenu"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="2.0" >
+
+        <Button
+            android:id="@+id/takeScreenShot"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1.0"
+            android:background="#505050"
+            android:drawableLeft="@drawable/capture"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Capture Screen"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:typeface="serif" />
+
+        <Button
+            android:id="@+id/fbShare"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1.0"
+            android:background="#3b5999"
+            android:drawableLeft="@drawable/facebook"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Share"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffff"
+            android:typeface="serif" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/scanner"
+        android:layout_width="fill_parent"
+        android:layout_height="40dip"
+        android:background="@drawable/scanner_strip"
+        android:visibility="invisible" />
+
+</RelativeLayout>

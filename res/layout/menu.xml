@@ -1,0 +1,134 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e8ebef"
+    android:gravity="center"
+    tools:context=".Game" >
+
+    <LinearLayout
+        android:id="@+id/linearlayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
+            android:gravity="center_vertical"
+            android:text="Sound FX "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="italic"
+            android:typeface="serif" />
+
+        <Button
+            android:id="@+id/soundFX"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:background="@drawable/menu_button__4"
+            android:text="ON"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#eeeeee"
+            android:textStyle="italic"
+            android:typeface="serif" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/tileSelectorMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearlayout1"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/menu_button__4"
+        android:text="Tile"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/highScoreMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tileSelectorMenu"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/menu_button__4"
+        android:text="Best Score"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/saveLoadMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/highScoreMenu"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/menu_button__4"
+        android:text="Load Game"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/rateUsMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/saveLoadMenu"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/menu_button__4"
+        android:text="Rate Us"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <!-- android:background="#1abc9c" -->
+
+    <Button
+        android:id="@+id/likeUs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rateUsMenu"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="5dip"
+        android:background="@drawable/menu_button__4"
+        android:text="Like Us"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+    <!-- android:background="#9b59b6" -->
+
+    <Button
+        android:id="@+id/mainMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/likeUs"
+        android:layout_marginLeft="25dip"
+        android:layout_marginRight="25dip"
+        android:layout_marginTop="30dip"
+        android:background="@drawable/menu_button_default"
+        android:text="Main Menu"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#eeeeee"
+        android:textStyle="italic"
+        android:typeface="serif" />
+
+</RelativeLayout>

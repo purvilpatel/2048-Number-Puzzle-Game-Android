@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rateus_bkg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#e8ebef"
+    android:gravity="center" >
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="7dp"
+        android:gravity="center"
+        android:text="Rate the App"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#141414"
+        android:textStyle="bold|italic"
+        android:typeface="serif" />
+
+    <Button
+        android:id="@+id/rateNow"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/menu_button_default"
+        android:text="OK, I&apos;ll rate it now"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+    <!-- android:background="#66c9b5" -->
+
+    <Button
+        android:id="@+id/rateLater"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/rateNow"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/menu_button_default"
+        android:text="Not now"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffff"
+        android:typeface="serif" />
+    <!-- android:background="#66c9b5" -->
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView2"
+        android:layout_alignLeft="@+id/textView2"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView2"
+        android:layout_margin="10dp"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:text="Enjoying the app? Help us out and rate us in the Play Store. We&apos;ll be sure to keep the updates coming in return!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#404040"
+        android:typeface="serif" />
+
+</RelativeLayout>
