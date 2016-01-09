@@ -18,10 +18,8 @@ import android.media.MediaPlayer;
 import android.view.View;
 
 import com.inverted.tech.mission2048.Game;
-import com.inverted.tech.mission2048.HighScore;
 import com.inverted.tech.mission2048.R;
-import com.inverted.tech.mission2048.R.drawable;
-import com.inverted.tech.mission2048.R.raw;
+import com.inverted.tech.mission2048.SupportActivities.HighScore;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.supportClass.OnSwipeTouchListener;
 
@@ -95,6 +93,7 @@ public class TimerGame extends View implements Runnable {
 	private int targetTile;
 	private boolean isMusic;
 
+	@SuppressLint("ClickableViewAccessibility")
 	public TimerGame(final Context context) {
 		super(context);
 		this.cntxt = context;

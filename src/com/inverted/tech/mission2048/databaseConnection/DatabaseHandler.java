@@ -372,8 +372,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	public int getGameDataScreenHeight() {
-		String selectQuery = "SELECT " + GAME_DATA_SCREEN_HEIGHT + " FROM "
-				+ TABLE_GAME_DATA;
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.query(TABLE_GAME_DATA,
 				new String[] { GAME_DATA_SCREEN_HEIGHT }, null, null, null,

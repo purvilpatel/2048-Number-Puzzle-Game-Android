@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.inverted.tech.mission2048.SupportActivities.BestScoreDisplay;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.highScoreValue;
 

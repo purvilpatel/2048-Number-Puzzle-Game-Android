@@ -1,4 +1,4 @@
-package com.inverted.tech.mission2048;
+package com.inverted.tech.mission2048.SupportActivities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +32,9 @@ import android.widget.Toast;
 import com.inverted.tech.depricatedClass.LimitedMoveGame;
 import com.inverted.tech.depricatedClass.NormalGame;
 import com.inverted.tech.depricatedClass.TimerGame;
+import com.inverted.tech.mission2048.Game;
+import com.inverted.tech.mission2048.GameDisplay;
+import com.inverted.tech.mission2048.R;
 import com.inverted.tech.mission2048.common.AuthListener;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.facebook.FacebookFacade;

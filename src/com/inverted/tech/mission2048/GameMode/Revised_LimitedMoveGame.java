@@ -1,4 +1,4 @@
-package com.inverted.tech.mission2048;
+package com.inverted.tech.mission2048.GameMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,20 +35,20 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inverted.tech.mission2048.GameDisplay;
+import com.inverted.tech.mission2048.NewMenuOption;
 import com.inverted.tech.mission2048.R;
-import com.inverted.tech.mission2048.R.drawable;
-import com.inverted.tech.mission2048.R.id;
-import com.inverted.tech.mission2048.R.layout;
+import com.inverted.tech.mission2048.SupportActivities.NewHighscoreActivity;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.supportClass.OnSwipeTouchListener;
 
 @SuppressLint("DrawAllocation")
-public class Revised_NormalGame extends View implements Runnable {
+public class Revised_LimitedMoveGame extends View {
 
 	public static int gameBoardSize;
 	public static int gameBoard[][];
-	private int prevGameBoard[][];
 	private Point gameBoardPos[][];
+	private int prevGameBoard[][];
 
 	private Point scoreDisplay;
 	private Point timeDisplay;
@@ -67,7 +67,7 @@ public class Revised_NormalGame extends View implements Runnable {
 	private Paint smallTextPaint;
 	private Paint tutorialTextPaint;
 
-	private static Context mContext;
+	private Context mContext;
 
 	private Bitmap bitmapBkg;
 	private Bitmap bitmapEmpty;
@@ -113,10 +113,7 @@ public class Revised_NormalGame extends View implements Runnable {
 	private Bitmap bitmapTile_bomb;
 
 	public static int currentScore;
-	private int totalTime = 90;
 
-	private Thread timerThread;
-	private boolean timerThreadActive = true;
 	private boolean gameEndFlag = false;
 	private boolean gameWonFlag = false;
 	public static String msgForHighScoreActivity = "";
@@ -138,9 +135,6 @@ public class Revised_NormalGame extends View implements Runnable {
 	private int targetTile = 1024;
 	private View rootView;
 	private Typeface typeFace;
-	public static boolean autoMoveThreadControllFlag = true;
-	private static Thread autoMoveThread = null;
-	private static final int autoMovePauseTime = 500;
 
 	private static final int MULTIPLY_BY_2_POWERUP = 22;
 	private static final int BOMB_POWERUP = -1;
@@ -148,25 +142,13 @@ public class Revised_NormalGame extends View implements Runnable {
 	private int currentBooster;
 	private boolean isNextTileBooster = false;
 	private Dialog boosterDialog;
+	private int move = 32;
+	private boolean outOfMoveFlag;
 
-	public static boolean isPlay = true;
-
-	// Tutorial messages
-	private String tutorialMsg[] = { "Swipe anywhere to move the tiles.",
-			"Every Tile movese when you swipe.",
-			"Add same numbers by pushing them into walls.", "Great !.",
-			"New Numbers appear when you move Tiles.", "You've got it.",
-			"Create another 8 to countinue",
-			"Your Aim is to Create Tile of 2048.",
-			"Use Save button to store current game state.",
-			"Explore Menu for more options" };
-
-	private boolean tileMerged = false;
-	private int msgNo = 0;
-
-	public Revised_NormalGame(final Context context) {
+	@SuppressLint("ClickableViewAccessibility")
+	public Revised_LimitedMoveGame(final Context context) {
 		super(context);
-		Revised_NormalGame.mContext = context;
+		this.mContext = context;
 
 		DatabaseHandler db = new DatabaseHandler(context);
 		gameBoardSize = db.getGameDataNoOfTile();
@@ -176,7 +158,6 @@ public class Revised_NormalGame extends View implements Runnable {
 
 		initInfo();
 
-		// register touch gesture listener
 		setOnTouchListener(new OnSwipeTouchListener(context) {
 			public boolean onTap(MotionEvent me) {
 
@@ -212,8 +193,6 @@ public class Revised_NormalGame extends View implements Runnable {
 			public boolean onSwipeTop() {
 				if (gameEndFlag || gameWonFlag)
 					return true;
-				if (Game.tutorialEnabled)
-					generateMessage();
 				swipeUp();
 				invalidate();
 				return true;
@@ -222,8 +201,6 @@ public class Revised_NormalGame extends View implements Runnable {
 			public boolean onSwipeRight() {
 				if (gameEndFlag || gameWonFlag)
 					return true;
-				if (Game.tutorialEnabled)
-					generateMessage();
 				swipeRight();
 				invalidate();
 				return true;
@@ -232,8 +209,6 @@ public class Revised_NormalGame extends View implements Runnable {
 			public boolean onSwipeLeft() {
 				if (gameEndFlag || gameWonFlag)
 					return true;
-				if (Game.tutorialEnabled)
-					generateMessage();
 				swipeLeft();
 				invalidate();
 				return true;
@@ -242,21 +217,11 @@ public class Revised_NormalGame extends View implements Runnable {
 			public boolean onSwipeBottom() {
 				if (gameEndFlag || gameWonFlag)
 					return true;
-				if (Game.tutorialEnabled)
-					generateMessage();
 				swipeDown();
 				invalidate();
 				return true;
 			}
 		});
-	}
-
-	// for tutorial generate message
-	private void generateMessage() {
-		if (msgNo == 5 && !tileMerged)
-			return;
-		msgNo++;
-		invalidate();
 	}
 
 	private void initInfo() {
@@ -276,9 +241,6 @@ public class Revised_NormalGame extends View implements Runnable {
 		tileSepration = (int) (screenWidth * 0.1) / (gameBoardSize + 1);
 
 		gameBoardWidth = screenWidth;
-		// //system.out.println("tileHeight :  " + tileHeight +
-		// "    tileWidth :   "
-		// + tileWidth + "   tileSepration:   " + tileSepration);
 
 		int x = tileSepration;
 		int y = (int) ((screenHeight - gameBoardWidth) * 0.3);
@@ -385,38 +347,479 @@ public class Revised_NormalGame extends View implements Runnable {
 		tutorialTextPaint.setTypeface(typeFace);
 		tutorialTextPaint.setTextSize((float) (headerButtonHeight * 0.32));
 
-		// Initialize game board
 		generateBitmaps();
+		startGame();
 
 		// game resumed
 		if (GameDisplay.startedAfterPause) {
 			resumeGameState();
 		}
-		startGame();
 	}
 
 	private void startGame() {
-		if (Game.tutorialEnabled) {
-			gameBoard[1][2] = 2;
-			gameBoard[2][2] = 2;
+		if (gameBoardSize == 3) {
+			move = 32;
+			generateRandomTile();
+			generateRandomTile();
 		} else {
+			move = 34;
+			generateRandomTile();
+			generateRandomTile();
 			generateRandomTile();
 			generateRandomTile();
 		}
 
-		// reset score and time
 		currentScore = 0;
-		totalTime = 0;
 		gameEndFlag = false;
 		gameWonFlag = false;
-		timerThreadActive = true;
-		autoMoveThreadControllFlag = false;
 		msgForHighScoreActivity = "";
-
-		// start timer thread
-		timerThread = new Thread(this);
-		timerThread.start();
 	}
+
+	private void resumeGameState() {
+		GameDisplay.startedAfterPause = false;
+		System.out.println("" + GameDisplay.gameState.getDisplayvalue());
+		currentScore = GameDisplay.gameState.getScore();
+		move = GameDisplay.gameState.getTime();
+
+		for (int i = 0; i < GameDisplay.gameState.getNoOfTile(); i++) {
+			System.arraycopy(GameDisplay.gameState.stringToBoard()[i], 0,
+					gameBoard[i], 0, gameBoard[i].length);
+			System.out.println("resumed game copied");
+		}
+	}
+
+	private boolean swipeLeft() {
+		System.out.println("left called");
+		boolean flag = false;
+		currentSwipe = SWIPE_LEFT;
+		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
+			for (int i = 0; i < gameBoardSize; i++) {
+				for (int j = 0; j < gameBoardSize - 1; j++) {
+					if (gameBoard[i][j] == -1) {
+						bombFound(i, j, findMaxTile(i, j));
+						k = 0;
+						continue fromStart;
+					}
+					if (gameBoard[i][j] == MULTIPLY_BY_2_POWERUP && j != 0) {
+						if (gameBoard[i][j - 1] != 0) {
+							gameBoard[i][j - 1] *= 2;
+							gameBoard[i][j] = 0;
+						}
+					}
+					if (gameBoard[i][j] == 0) {
+						gameBoard[i][j] = gameBoard[i][j + 1];
+						gameBoard[i][j + 1] = 0;
+						if (prevSwipe != currentSwipe) {
+						}
+					}
+				}
+			}
+		}
+		System.out.println("left 1");
+		for (int i = 0; i < gameBoardSize; i++) {
+			for (int j = 0; j < gameBoardSize - 1; j++) {
+				if (gameBoard[i][j] == gameBoard[i][j + 1]
+						&& gameBoard[i][j] != 0) {
+					gameBoard[i][j] += gameBoard[i][j];
+					// playTileGenClick();
+					// playTileGenClick();
+					if (gameBoard[i][j] >= targetTile) {
+						gameWonFlag = true;
+						gameEndFlag = true;
+					}
+
+					currentScore += gameBoard[i][j];
+					gameBoard[i][j + 1] = 0;
+					// tileMerged = true;
+
+					for (int k = j + 1; k < gameBoardSize - 1; k++) {
+						gameBoard[i][k] = gameBoard[i][k + 1];
+					}
+					gameBoard[i][gameBoardSize - 1] = 0;
+				}
+			}
+		}
+		System.out.println("left 2");
+		if (checkForTileGeneration()) {
+			generateRandomTile();
+			flag = true;
+		}
+		System.out.println("left 3");
+
+		if (isGameEnded() || gameWonFlag) {
+			gameEndFlag = true;
+		}
+		System.out.println("left 4");
+
+		prevSwipe = currentSwipe;
+		updatePrevGameBoard();
+		System.out.println("left 5");
+		return flag;
+	}
+
+	private boolean swipeRight() {
+		System.out.println("right called");
+		boolean flag = false;
+		currentSwipe = SWIPE_RIGHT;
+		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
+			for (int i = 0; i < gameBoardSize; i++) {
+				for (int j = gameBoardSize - 1; j > 0; j--) {
+					if (gameBoard[i][j] == -1) {
+						bombFound(i, j, findMaxTile(i, j));
+						k = 0;
+						continue fromStart;
+					}
+					if (gameBoard[i][j] == MULTIPLY_BY_2_POWERUP
+							&& j != gameBoardSize - 1) {
+						if (gameBoard[i][j + 1] != 0) {
+							gameBoard[i][j + 1] += gameBoard[i][j + 1];
+							gameBoard[i][j] = 0;
+						}
+					}
+					if (gameBoard[i][j] == 0) {
+						gameBoard[i][j] = gameBoard[i][j - 1];
+						gameBoard[i][j - 1] = 0;
+						if (prevSwipe != currentSwipe) {
+						}
+					}
+				}
+			}
+		}
+		for (int i = 0; i < gameBoardSize; i++) {
+			for (int j = gameBoardSize - 1; j > 0; j--) {
+				if (gameBoard[i][j] == gameBoard[i][j - 1]
+						&& gameBoard[i][j] != 0) {
+					gameBoard[i][j] += gameBoard[i][j];
+					// playTileGenClick();
+					// playTileGenClick();
+					if (gameBoard[i][j] >= targetTile) {
+						gameWonFlag = true;
+						gameEndFlag = true;
+					}
+					currentScore += gameBoard[i][j];
+					// tileMerged = true;
+					gameBoard[i][j - 1] = 0;
+
+					for (int k = j - 1; k > 0; k--) {
+						gameBoard[i][k] = gameBoard[i][k - 1];
+					}
+					gameBoard[i][0] = 0;
+				}
+			}
+		}
+		if (checkForTileGeneration()) {
+			generateRandomTile();
+			flag = true;
+		}
+
+		if (isGameEnded() || gameWonFlag) {
+			gameEndFlag = true;
+		}
+
+		prevSwipe = currentSwipe;
+		updatePrevGameBoard();
+		return flag;
+	}
+
+	private boolean swipeUp() {
+		System.out.println("up called");
+		boolean flag = false;
+		currentSwipe = SWIPE_UP;
+		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
+			for (int i = 0; i < gameBoardSize; i++) {
+				for (int j = 0; j < gameBoardSize - 1; j++) {
+					if (gameBoard[i][j] == -1) {
+						bombFound(i, j, findMaxTile(i, j));
+						k = 0;
+						continue fromStart;
+					}
+					if (gameBoard[j][i] == MULTIPLY_BY_2_POWERUP && j != 0) {
+						if (gameBoard[j - 1][i] != 0) {
+							gameBoard[j - 1][i] += gameBoard[j - 1][i];
+							gameBoard[j][i] = 0;
+						}
+					}
+					if (gameBoard[j][i] == 0) {
+						gameBoard[j][i] = gameBoard[j + 1][i];
+						gameBoard[j + 1][i] = 0;
+					}
+				}
+			}
+		}
+		for (int i = 0; i < gameBoardSize; i++) {
+			for (int j = 0; j < gameBoardSize - 1; j++) {
+				if (gameBoard[j][i] == gameBoard[j + 1][i]
+						&& gameBoard[j][i] != 0) {
+					gameBoard[j][i] += gameBoard[j][i];
+					// playTileGenClick();
+					// playTileGenClick();
+					if (gameBoard[i][j] >= targetTile) {
+						gameWonFlag = true;
+						gameEndFlag = true;
+					}
+					currentScore += gameBoard[j][i];
+					// tileMerged = true;
+					gameBoard[j + 1][i] = 0;
+					for (int k = j + 1; k < gameBoardSize - 1; k++) {
+						gameBoard[k][i] = gameBoard[k + 1][i];
+					}
+					gameBoard[gameBoardSize - 1][i] = 0;
+				}
+			}
+		}
+		if (checkForTileGeneration()) {
+			generateRandomTile();
+			flag = true;
+		}
+
+		if (isGameEnded() || gameWonFlag) {
+			gameEndFlag = true;
+		}
+
+		prevSwipe = currentSwipe;
+		updatePrevGameBoard();
+		return flag;
+	}
+
+	private boolean swipeDown() {
+		System.out.println("down called");
+		boolean flag = false;
+		currentSwipe = SWIPE_DOWN;
+		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
+			for (int i = 0; i < gameBoardSize; i++) {
+				for (int j = gameBoardSize - 1; j > 0; j--) {
+					if (gameBoard[i][j] == -1) {
+						bombFound(i, j, findMaxTile(i, j));
+						k = 0;
+						continue fromStart;
+					}
+					if (gameBoard[j][i] == MULTIPLY_BY_2_POWERUP
+							&& j != gameBoardSize - 1) {
+						if (gameBoard[j + 1][i] != 0) {
+							gameBoard[j + 1][i] += gameBoard[j + 1][i];
+							gameBoard[j][i] = 0;
+						}
+					}
+					if (gameBoard[j][i] == 0) {
+						gameBoard[j][i] = gameBoard[j - 1][i];
+						gameBoard[j - 1][i] = 0;
+						if (prevSwipe != currentSwipe) {
+						}
+					}
+				}
+			}
+		}
+		for (int i = 0; i < gameBoardSize; i++) {
+			for (int j = gameBoardSize - 1; j > 0; j--) {
+				if (gameBoard[j][i] == gameBoard[j - 1][i]
+						&& gameBoard[j][i] != 0) {
+					gameBoard[j][i] += gameBoard[j][i];
+					// playTileGenClick();
+					// playTileGenClick();
+					if (gameBoard[i][j] >= targetTile) {
+						gameWonFlag = true;
+						gameEndFlag = true;
+					}
+					currentScore += gameBoard[j][i];
+					// tileMerged = true;
+					gameBoard[j - 1][i] = 0;
+					for (int k = j - 1; k > 0; k--) {
+						gameBoard[k][i] = gameBoard[k - 1][i];
+					}
+					gameBoard[0][i] = 0;
+				}
+			}
+		}
+		if (checkForTileGeneration()) {
+			generateRandomTile();
+			flag = true;
+		}
+
+		if (isGameEnded() || gameWonFlag) {
+			gameEndFlag = true;
+		}
+
+		prevSwipe = currentSwipe;
+		updatePrevGameBoard();
+		return flag;
+	}
+
+	private void incrementMoveCount() {
+		move--;
+		if (move == 0) {
+			gameEndFlag = true;
+			outOfMoveFlag = true;
+		}
+	}
+
+	private void bombFound(int i, int j, int max) {
+		if (i > 0 && j > 0) {
+			if (gameBoard[i - 1][j - 1] != max)
+				gameBoard[i - 1][j - 1] = 0;
+		}
+		if (i > 0) {
+			if (gameBoard[i - 1][j] != max)
+				gameBoard[i - 1][j] = 0;
+		}
+		if (i > 0 && j < gameBoardSize - 1) {
+			if (gameBoard[i - 1][j + 1] != max)
+				gameBoard[i - 1][j + 1] = 0;
+		}
+
+		if (j > 0) {
+			if (gameBoard[i][j - 1] != max)
+				gameBoard[i][j - 1] = 0;
+		}
+		gameBoard[i][j] = 0;
+		if (j < gameBoardSize - 1) {
+			if (gameBoard[i][j + 1] != max)
+				gameBoard[i][j + 1] = 0;
+		}
+
+		if (i < gameBoardSize - 1 && j > 0) {
+			if (gameBoard[i + 1][j - 1] != max)
+				gameBoard[i + 1][j - 1] = 0;
+		}
+		if (i < gameBoardSize - 1) {
+			if (gameBoard[i + 1][j] != max)
+				gameBoard[i + 1][j] = 0;
+		}
+		if (i < gameBoardSize - 1 && j < gameBoardSize - 1) {
+			if (gameBoard[i + 1][j + 1] != max)
+				gameBoard[i + 1][j + 1] = 0;
+		}
+	}
+
+	private int findMaxTile(int i, int j) {
+		int max = gameBoard[0][0];
+		if (i > 0 && j > 0) {
+			if (gameBoard[i - 1][j - 1] > max)
+				max = gameBoard[i - 1][j - 1];
+		}
+		if (i > 0) {
+			if (gameBoard[i - 1][j] > max)
+				max = gameBoard[i - 1][j];
+		}
+		if (i > 0 && j < gameBoardSize - 1) {
+			if (gameBoard[i - 1][j + 1] > max)
+				max = gameBoard[i - 1][j + 1];
+		}
+
+		if (j > 0) {
+			if (gameBoard[i][j - 1] > max)
+				max = gameBoard[i][j - 1];
+		}
+		if (j < gameBoardSize - 1) {
+			if (gameBoard[i][j + 1] > max)
+				max = gameBoard[i][j + 1];
+		}
+
+		if (i < gameBoardSize - 1 && j > 0) {
+			if (gameBoard[i + 1][j - 1] > max)
+				max = gameBoard[i + 1][j - 1];
+		}
+		if (i < gameBoardSize - 1) {
+			if (gameBoard[i + 1][j] > max)
+				max = gameBoard[i + 1][j];
+		}
+		if (i < gameBoardSize - 1 && j < gameBoardSize - 1) {
+			if (gameBoard[i + 1][j + 1] > max)
+				max = gameBoard[i + 1][j + 1];
+		}
+		System.out.println(max);
+		return max;
+	}
+
+	private void updatePrevGameBoard() {
+		for (int i = 0; i < gameBoard.length; i++)
+			System.arraycopy(gameBoard[i], 0, prevGameBoard[i], 0,
+					gameBoard.length);
+	}
+
+	private boolean checkForTileGeneration() {
+		for (int i = 0; i < gameBoard.length; i++) {
+			for (int j = 0; j < gameBoard.length; j++) {
+				if (gameBoard[i][j] != prevGameBoard[i][j])
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isGameEnded() {
+		if (countTile() == ((int) Math.pow(gameBoardSize, 2)))
+			if (!isRowMovePosible() && !isColoumMovePosible()) {
+				return true;
+			}
+		return false;
+	}
+
+	private boolean isRowMovePosible() {
+		for (int i = 0; i < gameBoardSize; i++)
+			for (int j = 0; j < gameBoardSize - 1; j++) {
+				if (gameBoard[i][j] == gameBoard[i][j + 1])
+					return true;
+			}
+		return false;
+	}
+
+	private boolean isColoumMovePosible() {
+		for (int i = 0; i < gameBoardSize; i++)
+			for (int j = 0; j < gameBoardSize - 1; j++) {
+				if (gameBoard[j][i] == gameBoard[j + 1][i])
+					return true;
+			}
+		return false;
+	}
+
+	private boolean generateRandomTile() {
+		rndMove = new Random(System.currentTimeMillis());
+		int rnd = rndMove.nextInt((int) Math.pow(gameBoardSize, 2));
+		while (true) {
+			int tile;
+			if (isNextTileBooster) {
+				tile = currentBooster;
+			} else
+				tile = rndMove.nextFloat() < 0.9f ? 4 : 8;
+
+			if (gameBoard[rnd / gameBoardSize][rnd % gameBoardSize] == 0) {
+				gameBoard[rnd / gameBoardSize][rnd % gameBoardSize] = tile;
+				if (isNextTileBooster) {
+					noOfBoosterToProduce--;
+					if (noOfBoosterToProduce == 0) {
+						isNextTileBooster = false;
+						currentBooster = 0;
+					}
+				}
+				incrementMoveCount();
+				return true;
+			} else {
+				rnd = rndMove.nextInt((int) Math.pow(gameBoardSize, 2));
+			}
+		}
+	}
+
+	private int countTile() {
+		int count = 0;
+		for (int i = 0; i < gameBoardSize; i++) {
+			for (int j = 0; j < gameBoardSize; j++) {
+				if (gameBoard[i][j] != 0) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	// private void display() {
+	// for (int i = 0; i < gameBoardSize; i++) {
+	// for (int j = 0; j < gameBoardSize; j++) {
+	// System.out.print("" + gameBoard[i][j] + "    ");
+	// }
+	// System.out.println("");
+	// }
+	// System.out.println("");
+	// }
 
 	private void generateBitmaps() {
 
@@ -551,469 +954,13 @@ public class Revised_NormalGame extends View implements Runnable {
 				tileHeight, true);
 	}
 
-	private void resumeGameState() {
-		isPlay = true;
-		GameDisplay.startedAfterPause = false;
-		System.out.println("" + GameDisplay.gameState.getDisplayvalue());
-		currentScore = GameDisplay.gameState.getScore();
-		totalTime = GameDisplay.gameState.getTime();
-
-		for (int i = 0; i < GameDisplay.gameState.getNoOfTile(); i++) {
-			System.arraycopy(GameDisplay.gameState.stringToBoard()[i], 0,
-					gameBoard[i], 0, gameBoard[i].length);
-			System.out.println("resumed game copied");
-		}
-	}
-
-	private boolean swipeLeft() {
-		boolean flag = false;
-		currentSwipe = SWIPE_LEFT;
-		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
-			for (int i = 0; i < gameBoardSize; i++) {
-				for (int j = 0; j < gameBoardSize - 1; j++) {
-					if (gameBoard[i][j] == -1) {
-						bombFound(i, j, findMaxTile(i, j));
-						k = 0;
-						continue fromStart;
-					}
-					if (gameBoard[i][j] == MULTIPLY_BY_2_POWERUP && j != 0) {
-						if (gameBoard[i][j - 1] != 0) {
-							gameBoard[i][j - 1] *= 2;
-							gameBoard[i][j] = 0;
-						}
-					}
-					if (gameBoard[i][j] == MULTIPLY_BY_2_POWERUP && j == 0) {
-						if (gameBoard[i][j + 1] != 0) {
-							gameBoard[i][j] = gameBoard[i][j + 1] * 2;
-							gameBoard[i][j + 1] = 0;
-						}
-					}
-					if (gameBoard[i][j] == 0) {
-						gameBoard[i][j] = gameBoard[i][j + 1];
-						gameBoard[i][j + 1] = 0;
-						if (prevSwipe != currentSwipe) {
-						}
-					}
-				}
-			}
-		}
-		for (int i = 0; i < gameBoardSize; i++) {
-			for (int j = 0; j < gameBoardSize - 1; j++) {
-				if (gameBoard[i][j] == gameBoard[i][j + 1]
-						&& gameBoard[i][j] != 0) {
-					gameBoard[i][j] += gameBoard[i][j];
-					// playTileGenClick();
-					// playTileGenClick();
-					if (gameBoard[i][j] >= targetTile) {
-						gameWonFlag = true;
-						gameEndFlag = true;
-					}
-
-					currentScore += gameBoard[i][j];
-					gameBoard[i][j + 1] = 0;
-					// tileMerged = true;
-
-					for (int k = j + 1; k < gameBoardSize - 1; k++) {
-						gameBoard[i][k] = gameBoard[i][k + 1];
-					}
-					gameBoard[i][gameBoardSize - 1] = 0;
-				}
-			}
-		}
-		if (checkForTileGeneration()) {
-			generateRandomTile();
-			flag = true;
-		}
-
-		if (isGameEnded() || gameWonFlag) {
-			gameEndFlag = true;
-		}
-
-		prevSwipe = currentSwipe;
-		updatePrevGameBoard();
-		return flag;
-	}
-
-	private boolean swipeRight() {
-		boolean flag = false;
-		currentSwipe = SWIPE_RIGHT;
-		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
-			for (int i = 0; i < gameBoardSize; i++) {
-				for (int j = gameBoardSize - 1; j > 0; j--) {
-					if (gameBoard[i][j] == -1) {
-						bombFound(i, j, findMaxTile(i, j));
-						k = 0;
-						continue fromStart;
-					}
-					if (gameBoard[i][j] == MULTIPLY_BY_2_POWERUP
-							&& j != gameBoardSize - 1) {
-						if (gameBoard[i][j + 1] != 0) {
-							gameBoard[i][j + 1] += gameBoard[i][j + 1];
-							gameBoard[i][j] = 0;
-						}
-					}
-					if (gameBoard[i][j] == MULTIPLY_BY_2_POWERUP
-							&& j == gameBoardSize - 1) {
-						if (gameBoard[i][j - 1] != 0) {
-							gameBoard[i][j] = gameBoard[i][j - 1] * 2;
-							gameBoard[i][j - 1] = 0;
-						}
-					}
-					if (gameBoard[i][j] == 0) {
-						gameBoard[i][j] = gameBoard[i][j - 1];
-						gameBoard[i][j - 1] = 0;
-						if (prevSwipe != currentSwipe) {
-						}
-					}
-				}
-			}
-		}
-		for (int i = 0; i < gameBoardSize; i++) {
-			for (int j = gameBoardSize - 1; j > 0; j--) {
-				if (gameBoard[i][j] == gameBoard[i][j - 1]
-						&& gameBoard[i][j] != 0) {
-					gameBoard[i][j] += gameBoard[i][j];
-					// playTileGenClick();
-					// playTileGenClick();
-					if (gameBoard[i][j] >= targetTile) {
-						gameWonFlag = true;
-						gameEndFlag = true;
-					}
-					currentScore += gameBoard[i][j];
-					// tileMerged = true;
-					gameBoard[i][j - 1] = 0;
-
-					for (int k = j - 1; k > 0; k--) {
-						gameBoard[i][k] = gameBoard[i][k - 1];
-					}
-					gameBoard[i][0] = 0;
-				}
-			}
-		}
-		if (checkForTileGeneration()) {
-			generateRandomTile();
-			flag = true;
-		}
-
-		if (isGameEnded() || gameWonFlag) {
-			gameEndFlag = true;
-		}
-
-		prevSwipe = currentSwipe;
-		updatePrevGameBoard();
-		return flag;
-	}
-
-	private boolean swipeUp() {
-		boolean flag = false;
-		currentSwipe = SWIPE_UP;
-		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
-			for (int i = 0; i < gameBoardSize; i++) {
-				for (int j = 0; j < gameBoardSize - 1; j++) {
-					if (gameBoard[i][j] == -1) {
-						bombFound(i, j, findMaxTile(i, j));
-						k = 0;
-						continue fromStart;
-					}
-					if (gameBoard[j][i] == MULTIPLY_BY_2_POWERUP && j != 0) {
-						if (gameBoard[j - 1][i] != 0) {
-							gameBoard[j - 1][i] *= 2;
-							gameBoard[j][i] = 0;
-						}
-					}
-					if (gameBoard[j][i] == MULTIPLY_BY_2_POWERUP && j == 0) {
-						if (gameBoard[j + 1][i] != 0) {
-							gameBoard[j][i] = gameBoard[j + 1][i] * 2;
-							gameBoard[j + 1][i] = 0;
-						}
-					}
-					if (gameBoard[j][i] == 0) {
-						gameBoard[j][i] = gameBoard[j + 1][i];
-						gameBoard[j + 1][i] = 0;
-					}
-				}
-			}
-		}
-		for (int i = 0; i < gameBoardSize; i++) {
-			for (int j = 0; j < gameBoardSize - 1; j++) {
-				if (gameBoard[j][i] == gameBoard[j + 1][i]
-						&& gameBoard[j][i] != 0) {
-					gameBoard[j][i] += gameBoard[j][i];
-					// playTileGenClick();
-					// playTileGenClick();
-					if (gameBoard[i][j] >= targetTile) {
-						gameWonFlag = true;
-						gameEndFlag = true;
-					}
-					currentScore += gameBoard[j][i];
-					// tileMerged = true;
-					gameBoard[j + 1][i] = 0;
-					for (int k = j + 1; k < gameBoardSize - 1; k++) {
-						gameBoard[k][i] = gameBoard[k + 1][i];
-					}
-					gameBoard[gameBoardSize - 1][i] = 0;
-				}
-			}
-		}
-		if (checkForTileGeneration()) {
-			generateRandomTile();
-			flag = true;
-		}
-
-		if (isGameEnded() || gameWonFlag) {
-			gameEndFlag = true;
-		}
-
-		prevSwipe = currentSwipe;
-		updatePrevGameBoard();
-		return flag;
-	}
-
-	private boolean swipeDown() {
-		boolean flag = false;
-		currentSwipe = SWIPE_DOWN;
-		fromStart: for (int k = 0; k < gameBoardSize - 1; k++) {
-			for (int i = 0; i < gameBoardSize; i++) {
-				for (int j = gameBoardSize - 1; j > 0; j--) {
-					if (gameBoard[i][j] == -1) {
-						bombFound(i, j, findMaxTile(i, j));
-						k = 0;
-						continue fromStart;
-					}
-					if (gameBoard[j][i] == MULTIPLY_BY_2_POWERUP
-							&& j != gameBoardSize - 1) {
-						if (gameBoard[j + 1][i] != 0) {
-							gameBoard[j + 1][i] *= 2;
-							gameBoard[j][i] = 0;
-						}
-					}
-					if (gameBoard[j][i] == MULTIPLY_BY_2_POWERUP
-							&& j == gameBoardSize - 1) {
-						if (gameBoard[j - 1][i] != 0) {
-							gameBoard[j][i] = gameBoard[j - 1][i] * 2;
-							gameBoard[j - 1][i] = 0;
-						}
-					}
-					if (gameBoard[j][i] == 0) {
-						gameBoard[j][i] = gameBoard[j - 1][i];
-						gameBoard[j - 1][i] = 0;
-						if (prevSwipe != currentSwipe) {
-						}
-					}
-				}
-			}
-		}
-		for (int i = 0; i < gameBoardSize; i++) {
-			for (int j = gameBoardSize - 1; j > 0; j--) {
-				if (gameBoard[j][i] == gameBoard[j - 1][i]
-						&& gameBoard[j][i] != 0) {
-					gameBoard[j][i] += gameBoard[j][i];
-					// playTileGenClick();
-					// playTileGenClick();
-					if (gameBoard[i][j] >= targetTile) {
-						gameWonFlag = true;
-						gameEndFlag = true;
-					}
-					currentScore += gameBoard[j][i];
-					// tileMerged = true;
-					gameBoard[j - 1][i] = 0;
-					for (int k = j - 1; k > 0; k--) {
-						gameBoard[k][i] = gameBoard[k - 1][i];
-					}
-					gameBoard[0][i] = 0;
-				}
-			}
-		}
-		if (checkForTileGeneration()) {
-			generateRandomTile();
-			flag = true;
-		}
-
-		if (isGameEnded() || gameWonFlag) {
-			gameEndFlag = true;
-		}
-
-		prevSwipe = currentSwipe;
-		updatePrevGameBoard();
-		return flag;
-	}
-
-	private int findMaxTile(int i, int j) {
-		int max = gameBoard[0][0];
-		if (i > 0 && j > 0) {
-			if (gameBoard[i - 1][j - 1] > max)
-				max = gameBoard[i - 1][j - 1];
-		}
-		if (i > 0) {
-			if (gameBoard[i - 1][j] > max)
-				max = gameBoard[i - 1][j];
-		}
-		if (i > 0 && j < gameBoardSize - 1) {
-			if (gameBoard[i - 1][j + 1] > max)
-				max = gameBoard[i - 1][j + 1];
-		}
-
-		if (j > 0) {
-			if (gameBoard[i][j - 1] > max)
-				max = gameBoard[i][j - 1];
-		}
-		if (j < gameBoardSize - 1) {
-			if (gameBoard[i][j + 1] > max)
-				max = gameBoard[i][j + 1];
-		}
-
-		if (i < gameBoardSize - 1 && j > 0) {
-			if (gameBoard[i + 1][j - 1] > max)
-				max = gameBoard[i + 1][j - 1];
-		}
-		if (i < gameBoardSize - 1) {
-			if (gameBoard[i + 1][j] > max)
-				max = gameBoard[i + 1][j];
-		}
-		if (i < gameBoardSize - 1 && j < gameBoardSize - 1) {
-			if (gameBoard[i + 1][j + 1] > max)
-				max = gameBoard[i + 1][j + 1];
-		}
-		System.out.println(max);
-		return max;
-	}
-
-	private void bombFound(int i, int j, int max) {
-		if (i > 0 && j > 0) {
-			if (gameBoard[i - 1][j - 1] != max)
-				gameBoard[i - 1][j - 1] = 0;
-		}
-		if (i > 0) {
-			if (gameBoard[i - 1][j] != max)
-				gameBoard[i - 1][j] = 0;
-		}
-		if (i > 0 && j < gameBoardSize - 1) {
-			if (gameBoard[i - 1][j + 1] != max)
-				gameBoard[i - 1][j + 1] = 0;
-		}
-
-		if (j > 0) {
-			if (gameBoard[i][j - 1] != max)
-				gameBoard[i][j - 1] = 0;
-		}
-		gameBoard[i][j] = 0;
-		if (j < gameBoardSize - 1) {
-			if (gameBoard[i][j + 1] != max)
-				gameBoard[i][j + 1] = 0;
-		}
-
-		if (i < gameBoardSize - 1 && j > 0) {
-			if (gameBoard[i + 1][j - 1] != max)
-				gameBoard[i + 1][j - 1] = 0;
-		}
-		if (i < gameBoardSize - 1) {
-			if (gameBoard[i + 1][j] != max)
-				gameBoard[i + 1][j] = 0;
-		}
-		if (i < gameBoardSize - 1 && j < gameBoardSize - 1) {
-			if (gameBoard[i + 1][j + 1] != max)
-				gameBoard[i + 1][j + 1] = 0;
-		}
-	}
-
-	private void updatePrevGameBoard() {
-		for (int i = 0; i < gameBoard.length; i++)
-			System.arraycopy(gameBoard[i], 0, prevGameBoard[i], 0,
-					gameBoard.length);
-	}
-
-	private boolean checkForTileGeneration() {
-		for (int i = 0; i < gameBoard.length; i++) {
-			for (int j = 0; j < gameBoard.length; j++) {
-				if (gameBoard[i][j] != prevGameBoard[i][j])
-					return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isGameEnded() {
-		// System.out.println("tile count : " + countTile());
-		// display();
-		if (countTile() == ((int) Math.pow(gameBoardSize, 2)))
-			if (!isRowMovePosible() && !isColoumMovePosible()) {
-				return true;
-			}
-		return false;
-	}
-
-	private boolean isRowMovePosible() {
-		for (int i = 0; i < gameBoardSize; i++)
-			for (int j = 0; j < gameBoardSize - 1; j++) {
-				if (gameBoard[i][j] == gameBoard[i][j + 1])
-					return true;
-			}
-		return false;
-	}
-
-	private boolean isColoumMovePosible() {
-		for (int i = 0; i < gameBoardSize; i++)
-			for (int j = 0; j < gameBoardSize - 1; j++) {
-				if (gameBoard[j][i] == gameBoard[j + 1][i])
-					return true;
-			}
-		return false;
-	}
-
-	private boolean generateRandomTile() {
-		rndMove = new Random(System.currentTimeMillis());
-		int rnd = rndMove.nextInt((int) Math.pow(gameBoardSize, 2));
-		while (true) {
-			int tile;
-			if (isNextTileBooster) {
-				tile = currentBooster;
-			} else
-				tile = rndMove.nextFloat() < 0.9f ? 2 : 4;
-
-			if (gameBoard[rnd / gameBoardSize][rnd % gameBoardSize] == 0) {
-				gameBoard[rnd / gameBoardSize][rnd % gameBoardSize] = tile;
-				if (isNextTileBooster) {
-					noOfBoosterToProduce--;
-					if (noOfBoosterToProduce == 0) {
-						isNextTileBooster = false;
-						currentBooster = 0;
-					}
-				}
-				return true;
-			} else {
-				rnd = rndMove.nextInt((int) Math.pow(gameBoardSize, 2));
-			}
-		}
-	}
-
-	private int countTile() {
-		int count = 0;
-		for (int i = 0; i < gameBoardSize; i++) {
-			for (int j = 0; j < gameBoardSize; j++) {
-				if (gameBoard[i][j] != 0) {
-					count++;
-				}
-			}
-		}
-		return count;
-	}
-
-	// private void display() {
-	// for (int i = 0; i < gameBoardSize; i++) {
-	// for (int j = 0; j < gameBoardSize; j++) {
-	// System.out.print("" + gameBoard[i][j] + "    ");
-	// }
-	// System.out.println("");
-	// }
-	// System.out.println("");
-	// }
-
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		rootView = getRootView();
 
-		// background
 		canvas.drawBitmap(bitmapBkg, 0, 0, null);
+
 		// header display
 		canvas.drawBitmap(bitmapTimeScoreHeader, scoreDisplay.x,
 				scoreDisplay.y, null);
@@ -1029,24 +976,24 @@ public class Revised_NormalGame extends View implements Runnable {
 		canvas.drawBitmap(nightModeBitmap, nightModePoint.x, nightModePoint.y,
 				null);
 
-		// Timer Display
-		Point pnt = getTextBound(getString(getTime()), timeDisplayCenter,
-				timeScoreTextPaint);
-		canvas.drawText(getString(getTime()), pnt.x, pnt.y, timeScoreTextPaint);
-
-		pnt = getTextBound("Time", timeDisplayCenter, smallTextPaint);
-		canvas.drawText("Time", pnt.x,
+		// Move Display
+		Point pnt = getTextBound("Move", timeDisplayCenter, smallTextPaint);
+		canvas.drawText("Move", pnt.x,
 				(float) (pnt.y - (headerButtonHeight * 0.6)), smallTextPaint);
 
-		// Current Display
+		pnt = getTextBound(String.valueOf(move), timeDisplayCenter,
+				timeScoreTextPaint);
+		canvas.drawText(String.valueOf(move), pnt.x, pnt.y, timeScoreTextPaint);
+
+		// Current Score Display
+		pnt = getTextBound("Score", scoreDisplayCenter, smallTextPaint);
+		canvas.drawText("Score", pnt.x,
+				(float) (pnt.y - (headerButtonHeight * 0.6)), smallTextPaint);
+
 		pnt = getTextBound(String.valueOf(currentScore), scoreDisplayCenter,
 				timeScoreTextPaint);
 		canvas.drawText(String.valueOf(currentScore), pnt.x, pnt.y,
 				timeScoreTextPaint);
-
-		pnt = getTextBound("Score", scoreDisplayCenter, smallTextPaint);
-		canvas.drawText("Score", pnt.x,
-				(float) (pnt.y - (headerButtonHeight * 0.6)), smallTextPaint);
 
 		// footer option menu display
 		canvas.drawBitmap(menuOptionBitmap, footerMenuOptionPoint.x,
@@ -1074,21 +1021,19 @@ public class Revised_NormalGame extends View implements Runnable {
 			for (int j = 0; j < gameBoardSize; j++) {
 
 				bitmap = getBitmap(gameBoard[i][j]);
+
 				canvas.drawBitmap(bitmap, gameBoardPos[i][j].x,
 						gameBoardPos[i][j].y, null);
 			}
-
-		if (Game.tutorialEnabled && msgNo < tutorialMsg.length) {
-			pnt = getTextBound(tutorialMsg[msgNo], tutorialCenter,
-					tutorialTextPaint);
-			canvas.drawText(tutorialMsg[msgNo], pnt.x, pnt.y, tutorialTextPaint);
-		}
 
 		if (gameEndFlag || gameWonFlag) {
 			if (!gameWonFlag) {
 				msgForHighScoreActivity = "No more Move possible";
 			} else {
 				msgForHighScoreActivity = "You Win!";
+			}
+			if (outOfMoveFlag) {
+				msgForHighScoreActivity = "Out of Moves!";
 			}
 			tutorialTextPaint.setTextSize((float) (headerButtonHeight * 0.6));
 			pnt = getTextBound(msgForHighScoreActivity, tutorialCenter,
@@ -1098,11 +1043,13 @@ public class Revised_NormalGame extends View implements Runnable {
 		}
 
 		if (gameEndFlag || gameWonFlag) {
-			stopTimer();
 			if (!gameWonFlag) {
 				msgForHighScoreActivity = "No more Move possible";
 			} else {
 				msgForHighScoreActivity = "You Win!";
+			}
+			if (outOfMoveFlag) {
+				msgForHighScoreActivity = "Out of Moves!";
 			}
 
 			pnt = getTextBound(msgForHighScoreActivity, tutorialCenter,
@@ -1117,14 +1064,6 @@ public class Revised_NormalGame extends View implements Runnable {
 					e.printStackTrace();
 				}
 
-				DatabaseHandler dbHandler = new DatabaseHandler(mContext);
-				dbHandler.setGameDataTotalScores(currentScore);
-				dbHandler.setGameDataTotalGame();
-				System.out.println("score submitted current score "
-						+ currentScore);
-				System.out.println("score submitted total score "
-						+ dbHandler.getGameDataTotalScores());
-				checkForAchievement();
 				Intent intent = new Intent(mContext, NewHighscoreActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1138,42 +1077,6 @@ public class Revised_NormalGame extends View implements Runnable {
 			threadSyncFlag = true;
 			invalidate();
 		}
-	}
-
-	private void checkForAchievement() {
-		DatabaseHandler dbHandler = new DatabaseHandler(mContext);
-		/*
-		 * // if (currentScore >= 1000 && currentScore < 5000) { //
-		 * GameDisplay.unlockAchievement(getResources().getString( //
-		 * R.string.novice_achievement)); // } // if (currentScore >= 5000 &&
-		 * currentScore < 10000) { //
-		 * GameDisplay.unlockAchievement(getResources().getString( //
-		 * R.string.rookie_achievement)); // } // if (currentScore >= 10000) {
-		 * // GameDisplay.unlockAchievement(getResources().getString( //
-		 * R.string.telented_achievement)); // } // int game =
-		 * dbHandler.getGameDataTotalGame(); // if (game == 1) { //
-		 * GameDisplay.unlockAchievement(getResources().getString( //
-		 * R.string.newbie_achievement)); //
-		 * GameDisplay.revealAchievement(getResources().getString( //
-		 * R.string.Champion_achievement)); // } // if (game > 1 && game <= 6) {
-		 * // GameDisplay.incrementAchievement( //
-		 * getResources().getString(R.string.Champion_achievement), 1); // } //
-		 * int win = dbHandler.getGameDataTotalWins(); // if (win == 1) { //
-		 * GameDisplay.unlockAchievement(getResources().getString( //
-		 * R.string.winner_achievement)); // } // // int score =
-		 * dbHandler.getGameDataTotalScores(); // if (score <= 25000) { //
-		 * GameDisplay.incrementAchievement( //
-		 * getResources().getString(R.string.Proficient_achievement), // score /
-		 * 10); // } // if (score > 25000 && score <= 50000) { //
-		 * GameDisplay.revealAchievement(getResources().getString( //
-		 * R.string.Expert_achievement)); // GameDisplay.incrementAchievement(
-		 * // getResources().getString(R.string.Expert_achievement), // score /
-		 * 10); // } // if (score > 50000 && score <= 100000) { //
-		 * GameDisplay.revealAchievement(getResources().getString( //
-		 * R.string.Supreme_achievement)); // GameDisplay.incrementAchievement(
-		 * // getResources().getString(R.string.Expert_achievement), // score /
-		 * 10); }
-		 */
 	}
 
 	private int calculateHighestTileBonus() {
@@ -1204,7 +1107,6 @@ public class Revised_NormalGame extends View implements Runnable {
 		Bitmap bitmap;
 
 		switch (value) {
-
 		case 2:
 			bitmap = bitmapTile_2;
 			break;
@@ -1273,45 +1175,6 @@ public class Revised_NormalGame extends View implements Runnable {
 		return bitmap;
 	}
 
-	public synchronized int getTime() {
-		return totalTime;
-	}
-
-	public synchronized void incrementTime() {
-		totalTime++;
-
-		postInvalidate();
-		if (gameEndFlag) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public void run() {
-		while (true) {
-			if (!timerThreadActive)
-				continue;
-			incrementTime();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void stopTimer() {
-		timerThreadActive = false;
-	}
-
-	public void resumeTimer() {
-		timerThreadActive = true;
-	}
-
 	private boolean isResetTouched(Point touchPoint) {
 		if (touchPoint.x >= resetPoint.x
 				&& touchPoint.x <= resetPoint.x + rightSidePanelIconSize)
@@ -1322,7 +1185,7 @@ public class Revised_NormalGame extends View implements Runnable {
 	}
 
 	private void resetGame() {
-		// Toast.makeText(mContext, "game reset", Toast.LENGTH_LONG).show();
+		Toast.makeText(mContext, "game reset", Toast.LENGTH_LONG).show();
 		for (int i = 0; i < gameBoardSize; i++)
 			for (int j = 0; j < gameBoardSize; j++) {
 				gameBoard[i][j] = 0;
@@ -1342,7 +1205,6 @@ public class Revised_NormalGame extends View implements Runnable {
 	}
 
 	private void showAchievement() {
-
 	}
 
 	private boolean isLeaderBoardTouched(Point touchPoint) {
@@ -1405,6 +1267,8 @@ public class Revised_NormalGame extends View implements Runnable {
 
 	private void showFooterMenuOption() {
 		Intent intent = new Intent(mContext, NewMenuOption.class);
+		// intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		// intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 		mContext.startActivity(intent);
 	}
 
@@ -1418,239 +1282,23 @@ public class Revised_NormalGame extends View implements Runnable {
 	}
 
 	private void showAutoMove() {
-		autoMoveThreadControllFlag = false;
-		if (gameEndFlag || gameWonFlag)
-			return;
-		stopTimer();
-		final CharSequence[] items = { "Corner", "Swing", "Swirl", "Random",
-				"Stop" };
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext,
-				AlertDialog.THEME_HOLO_LIGHT);
-		// builder.setTitle("Make your selection");
-		builder.setItems(items, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int item) {
-				if (gameEndFlag || gameWonFlag) {
-					return;
-				}
-				switch (item) {
-				case 0:
-					cornerAutoMove();
-					resumeTimer();
-					break;
-				case 1:
-					swingAutoMove();
-					resumeTimer();
-					break;
-				case 2:
-					swirlAutoMove();
-					resumeTimer();
-					break;
-				case 3:
-					randomAutoMove();
-					resumeTimer();
-					break;
-				default:
-					autoMoveThreadControllFlag = false;
-					resumeTimer();
-					break;
-				}
-			}
+		final AlertDialog alert = new AlertDialog.Builder(mContext,
+				AlertDialog.THEME_HOLO_LIGHT).create();
+		alert.setTitle("Auto move Alert");
+		alert.setCancelable(true);
+		alert.setMessage("Auto Move feature is not available in Limited Move Mode.");
+		alert.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+				new DialogInterface.OnClickListener() {
 
-		});
-		AlertDialog autoModeDialog = builder.create();
-		if (!autoModeDialog.isShowing())
-			autoModeDialog.show();
-	}
-
-	private void randomAutoMove() {
-		autoMoveThreadControllFlag = true;
-		if (prevSwipe == NO_SWIPE)
-			prevSwipe = SWIPE_UP;
-		autoMoveThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (autoMoveThreadControllFlag && !gameEndFlag) {
-					rndMove = new Random(System.currentTimeMillis());
-					int rnd = rndMove.nextInt(3);
-					switch (rnd) {
-					// case 0 is swirl
-					case 0:
-						switch (prevSwipe) {
-						case SWIPE_LEFT:
-							swipeUp();
-							break;
-						case SWIPE_UP:
-							swipeRight();
-							break;
-						case SWIPE_RIGHT:
-							swipeDown();
-							break;
-						case SWIPE_DOWN:
-							swipeLeft();
-							break;
-						}
-						break;
-					// case 1 is swing
-					case 1:
-						if (prevSwipe == SWIPE_LEFT || prevSwipe == SWIPE_RIGHT) {
-							leftRightSwing();
-						} else {
-							upDownSwing();
-						}
-						break;
-					// case 2 is corner
-					case 2:
-						rightCorner();
-						break;
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						alert.dismiss();
 					}
-					try {
-						Thread.sleep(autoMovePauseTime);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					postInvalidate();
-				}
-			}
-		});
-		autoMoveThread.start();
-	}
 
-	private void swirlAutoMove() {
-		autoMoveThreadControllFlag = true;
-		if (prevSwipe == NO_SWIPE)
-			prevSwipe = SWIPE_UP;
-		autoMoveThread = new Thread(new Runnable() {
+				});
+		alert.show();
+		return;
 
-			@Override
-			public void run() {
-				while (autoMoveThreadControllFlag && !gameEndFlag) {
-					switch (prevSwipe) {
-					case SWIPE_LEFT:
-						swipeUp();
-						break;
-					case SWIPE_UP:
-						swipeRight();
-						break;
-					case SWIPE_RIGHT:
-						swipeDown();
-						break;
-					case SWIPE_DOWN:
-						swipeLeft();
-						break;
-					}
-					try {
-						Thread.sleep(autoMovePauseTime);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					postInvalidate();
-				}
-			}
-		});
-		autoMoveThread.start();
-	}
-
-	private void swingAutoMove() {
-		autoMoveThreadControllFlag = true;
-		if (prevSwipe == NO_SWIPE)
-			prevSwipe = SWIPE_LEFT;
-		autoMoveThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (autoMoveThreadControllFlag && !gameEndFlag) {
-					if (prevSwipe == SWIPE_LEFT || prevSwipe == SWIPE_RIGHT) {
-						leftRightSwing();
-					} else {
-						upDownSwing();
-					}
-					try {
-						Thread.sleep(autoMovePauseTime);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					postInvalidate();
-				}
-			}
-		});
-		autoMoveThread.start();
-	}
-
-	private void leftRightSwing() {
-		if (prevSwipe == SWIPE_RIGHT) {
-			if (!swipeLeft()) {
-				if (!swipeRight()) {
-					prevSwipe = SWIPE_UP;
-					upDownSwing();
-				}
-			}
-		} else if (prevSwipe == SWIPE_LEFT) {
-			if (!swipeRight()) {
-				if (!swipeLeft()) {
-					prevSwipe = SWIPE_DOWN;
-					upDownSwing();
-				}
-			}
-		}
-	}
-
-	private void upDownSwing() {
-		if (prevSwipe == SWIPE_UP) {
-			if (!swipeDown()) {
-				if (!swipeUp()) {
-					prevSwipe = SWIPE_LEFT;
-					leftRightSwing();
-				}
-			}
-		} else if (prevSwipe == SWIPE_DOWN) {
-			if (!swipeUp()) {
-				if (!swipeDown()) {
-					prevSwipe = SWIPE_RIGHT;
-					leftRightSwing();
-				}
-			}
-		}
-	}
-
-	private void cornerAutoMove() {
-		autoMoveThreadControllFlag = true;
-		autoMoveThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (autoMoveThreadControllFlag && !gameEndFlag) {
-					rightCorner();
-					try {
-						Thread.sleep(autoMovePauseTime);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					postInvalidate();
-				}
-			}
-		});
-		autoMoveThread.start();
-	}
-
-	private void rightCorner() {
-		if (swipeRight()) {
-			if (!swipeUp()) {
-				swipeDown();
-			}
-		} else {
-			leftCorner();
-		}
-	}
-
-	private void leftCorner() {
-		if (swipeLeft()) {
-			if (!swipeUp()) {
-				swipeDown();
-			}
-		} else {
-			rightCorner();
-		}
 	}
 
 	private boolean isBoostersTouched(Point touchPoint) {
@@ -1665,8 +1313,6 @@ public class Revised_NormalGame extends View implements Runnable {
 	private void showBoostersDialod() {
 		if (gameEndFlag || gameWonFlag)
 			return;
-		stopTimer();
-		autoMoveThreadControllFlag = false;
 		if (isNextTileBooster) {
 			final AlertDialog alert = new AlertDialog.Builder(mContext,
 					AlertDialog.THEME_HOLO_LIGHT).create();
@@ -1678,7 +1324,6 @@ public class Revised_NormalGame extends View implements Runnable {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							resumeTimer();
 							alert.dismiss();
 						}
 
@@ -1731,6 +1376,7 @@ public class Revised_NormalGame extends View implements Runnable {
 			boosterDialog.show();
 	}
 
+	@SuppressWarnings("unused")
 	private void disabledForBoosterDialog(Dialog boosterDialog, int id) {
 		LinearLayout boosterDisplayLayout = (LinearLayout) boosterDialog
 				.findViewById(id);
@@ -1753,7 +1399,6 @@ public class Revised_NormalGame extends View implements Runnable {
 			public void onClick(View v) {
 				updateBoosterGenerationInformation(id);
 				boosterDialog.dismiss();
-				resumeTimer();
 			}
 		});
 	}
@@ -1891,24 +1536,6 @@ public class Revised_NormalGame extends View implements Runnable {
 							+ rightSidePanelIconSize)
 				return true;
 		return false;
-	}
-
-	public static String getString(int time) {
-		String str = "";
-
-		int sec = time % 60;
-		int min = time / 60;
-		if (min < 10)
-			str += "0" + String.valueOf(min) + ":";
-		else
-			str += String.valueOf(min) + ":";
-
-		if (sec < 10)
-			str += "0" + String.valueOf(sec);
-		else
-			str += String.valueOf(sec);
-
-		return str;
 	}
 
 	public void takeScreenShot() {

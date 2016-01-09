@@ -11,9 +11,9 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -21,10 +21,6 @@ import android.widget.Toast;
 
 import com.inverted.tech.mission2048.GameDisplay;
 import com.inverted.tech.mission2048.R;
-import com.inverted.tech.mission2048.R.drawable;
-import com.inverted.tech.mission2048.R.id;
-import com.inverted.tech.mission2048.R.layout;
-import com.inverted.tech.mission2048.R.raw;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.SaveAndLoad;
 

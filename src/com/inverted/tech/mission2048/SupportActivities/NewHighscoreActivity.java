@@ -1,4 +1,4 @@
-package com.inverted.tech.mission2048;
+package com.inverted.tech.mission2048.SupportActivities;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.inverted.tech.mission2048.R;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.highScoreValue;
 

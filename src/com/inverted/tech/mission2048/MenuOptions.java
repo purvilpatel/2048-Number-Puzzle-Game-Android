@@ -14,7 +14,8 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.RadioGroup;
 
-import com.inverted.tech.depricatedClass.LoadAndSave;
+import com.inverted.tech.mission2048.SupportActivities.BestScoreDisplay;
+import com.inverted.tech.mission2048.SupportActivities.RateUs;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.highScoreValue;
 
@@ -91,17 +92,6 @@ public class MenuOptions extends Activity {
 			}
 		});
 
-		btn = (Button) findViewById(R.id.saveLoadMenu);
-		btn.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				playBtnClickSound();
-				Intent newIntent = new Intent(MenuOptions.this,
-						LoadAndSave.class);
-				startActivity(newIntent);
-			}
-		});
-
 		btn = (Button) findViewById(R.id.highScoreMenu);
 		btn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -168,6 +158,7 @@ public class MenuOptions extends Activity {
 
 		btn = (Button) findViewById(R.id.tileSelectorMenu);
 		btn.setOnClickListener(new OnClickListener() {
+			@SuppressLint("CutPasteId")
 			@Override
 			public void onClick(View v) {
 				playBtnClickSound();

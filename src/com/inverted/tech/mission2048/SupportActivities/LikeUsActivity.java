@@ -1,4 +1,4 @@
-package com.inverted.tech.mission2048;
+package com.inverted.tech.mission2048.SupportActivities;
 
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 

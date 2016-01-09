@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.inverted.tech.depricatedClass.NormalGame;
 import com.inverted.tech.depricatedClass.TimerGame;
+import com.inverted.tech.mission2048.SupportActivities.AppRater;
+import com.inverted.tech.mission2048.SupportActivities.LikeUsActivity;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.highScoreValue;
 import com.inverted.tech.mission2048.supportClass.dataStorageClass;
@@ -299,9 +301,6 @@ public class Game extends Activity {
 		// }
 
 		List<highScoreValue> highScoreList = db.getAllHighScore();
-
-		System.out
-				.println("Reading values from database....updating game data");
 
 		int idx_normal_3 = 0, idx_normal_4 = 0, idx_normal_5 = 0;
 		int idx_timed_3 = 0, idx_timed_4 = 0, idx_timed_5 = 0;

@@ -2,11 +2,8 @@ package com.inverted.tech.mission2048;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender.SendIntentException;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -17,6 +14,10 @@ import android.widget.Toast;
 
 import com.inverted.tech.depricatedClass.LimitedMoveGame;
 import com.inverted.tech.depricatedClass.NormalGame;
+import com.inverted.tech.mission2048.GameMode.Revised_LimitedMoveGame;
+import com.inverted.tech.mission2048.GameMode.Revised_NormalGame;
+import com.inverted.tech.mission2048.GameMode.Revised_TimerGame;
+import com.inverted.tech.mission2048.SupportActivities.Resume_Pause;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.SaveAndLoad;
 
@@ -40,7 +41,6 @@ public class GameDisplay extends Activity {
 	private int gameMode;
 	public static int timeRushLimit;
 
-	private static final int RC_SIGN_IN = 0;
 	public static final String TIME_RUSH = "time_rush";
 
 	// Google client to interact with Google API
@@ -103,7 +103,6 @@ public class GameDisplay extends Activity {
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onResume() {
-
 		if (gameMode == Game.normalMode) {
 			normalGame.resumeTimer();
 		} else if (gameMode == Game.timerMode) {

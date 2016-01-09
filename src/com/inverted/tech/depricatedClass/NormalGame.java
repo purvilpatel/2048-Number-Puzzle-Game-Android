@@ -23,13 +23,9 @@ import android.widget.TextView;
 
 import com.inverted.tech.mission2048.Game;
 import com.inverted.tech.mission2048.GameDisplay;
-import com.inverted.tech.mission2048.HighScore;
 import com.inverted.tech.mission2048.R;
-import com.inverted.tech.mission2048.Resume_Pause;
-import com.inverted.tech.mission2048.R.drawable;
-import com.inverted.tech.mission2048.R.id;
-import com.inverted.tech.mission2048.R.layout;
-import com.inverted.tech.mission2048.R.raw;
+import com.inverted.tech.mission2048.SupportActivities.HighScore;
+import com.inverted.tech.mission2048.SupportActivities.Resume_Pause;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.databaseConnection.SaveAndLoad;
 import com.inverted.tech.mission2048.supportClass.OnSwipeTouchListener;
@@ -136,6 +132,7 @@ public class NormalGame extends View implements Runnable {
 	private int screenHeight;
 	private int targetTile;
 
+	@SuppressLint("ClickableViewAccessibility")
 	public NormalGame(final Context context) {
 		super(context);
 		this.cntxt = context;

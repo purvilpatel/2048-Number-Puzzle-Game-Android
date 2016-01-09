@@ -1,4 +1,4 @@
-package com.inverted.tech.mission2048;
+package com.inverted.tech.mission2048.GameMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,14 +35,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inverted.tech.mission2048.GameDisplay;
+import com.inverted.tech.mission2048.NewMenuOption;
 import com.inverted.tech.mission2048.R;
-import com.inverted.tech.mission2048.R.drawable;
-import com.inverted.tech.mission2048.R.id;
-import com.inverted.tech.mission2048.R.layout;
+import com.inverted.tech.mission2048.SupportActivities.NewHighscoreActivity;
 import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 import com.inverted.tech.mission2048.supportClass.OnSwipeTouchListener;
 
-@SuppressLint({ "DrawAllocation", "ShowToast" })
+@SuppressLint({ "DrawAllocation", "ShowToast", "ClickableViewAccessibility" })
 public class Revised_TimerGame extends View implements Runnable {
 
 	public static int gameBoardSize;
@@ -846,7 +846,6 @@ public class Revised_TimerGame extends View implements Runnable {
 	}
 
 	private void showLeaderBoard() {
-		Toast.makeText(mContext, "showLeaderBoard", Toast.LENGTH_LONG).show();
 	}
 
 	private boolean isNightModeTouched(Point touchPoint) {
@@ -1224,6 +1223,7 @@ public class Revised_TimerGame extends View implements Runnable {
 			boosterDialog.show();
 	}
 
+	@SuppressWarnings("unused")
 	private void disabledForBoosterDialog(Dialog boosterDialog, int id) {
 		LinearLayout boosterDisplayLayout = (LinearLayout) boosterDialog
 				.findViewById(id);

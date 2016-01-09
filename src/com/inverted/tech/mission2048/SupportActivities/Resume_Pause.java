@@ -1,6 +1,4 @@
-package com.inverted.tech.mission2048;
-
-import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
+package com.inverted.tech.mission2048.SupportActivities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +9,11 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import com.inverted.tech.mission2048.Game;
+import com.inverted.tech.mission2048.GameDisplay;
+import com.inverted.tech.mission2048.R;
+import com.inverted.tech.mission2048.databaseConnection.DatabaseHandler;
 
 public class Resume_Pause extends Activity {
 
